@@ -1,18 +1,20 @@
 const showOperation = document.querySelector('#showOperation');
+const showLastNumber = document.querySelector('#showLastNumber');
 let result = null;
 let operation;
-let numbers = [];
+let firstNumber;
+let secendNumber;
 
 
 function getOperation(op) {
-    if (numbers[0]) {
+    if (firstNumber) {
         getResult();
      }
         operation = op;
         if (showOperation.textContent) {
-          
-             numbers.push(Number(showOperation.textContent)); 
+            firstNumber= Number(showOperation.textContent); 
             }
+        showLastNumber.textContent = showOperation.textContent += operation; 
         showOperation.textContent = null;    
 }
 
@@ -22,29 +24,35 @@ function getNumber(number) {
 
 
 function getResult() {
+    if (firstNumber) {
 
-numbers.push(Number(showOperation.textContent));
+    secendNumber = Number(showOperation.textContent);
 
-if (operation == '+') {
-    result = numbers[0] + numbers[1];
-}
-else if (operation == '-') {
-    result = numbers[0] - numbers[1];
-}
-else if (operation == '*') {
-    result = numbers[0] * numbers[1];
-}
-else if (operation == '/') {
-    if ( numbers[1] == 0) {
-        alert('You can\'t divide by Zero, the page will be reloaded. Try again after 2000 week.');
-        reset() ;
-    }else result = numbers[0] / numbers[1];
-    
-}else result = numbers[0]
+    switch(operation) {
+		case '+':
+            result = firstNumber + secendNumber;
+		break;
+
+		case '-':
+            result = firstNumber - secendNumber;
+		break;
+
+		case '*':
+            result = firstNumber * secendNumber;
+		break;
+
+		case '/':
+            if ( secendNumber == 0) {
+                alert('You can\'t divide by Zero. Try again after 2000 year.');
+                reset() ;
+            }else result = firstNumber / secendNumber;
+		break;   
+	}
+
 operation = null;
-numbers = [];
-
+showLastNumber.textContent= null;
 return showOperation.textContent = result;
+}
    
 }
 function dot() {
@@ -54,12 +62,31 @@ function dot() {
 	}
 }
 function reset() {
-    window.location.reload();
+    showOperation.textContent= null;
+    showLastNumber.textContent= null;
+    operation = null;
+    secendNumber= null;
+    firstNumber= null;
 }
 
 function back() {
     if (showOperation.textContent != '') {
+        secendNumber= null;  
 		let back = showOperation.textContent;
 		showOperation.textContent = back.substring(0, back.length - 1);
-	}else{ showOperation.textContent = numbers[0];}
+	}else{ 
+        firstNumber= null;
+        let back = showLastNumber.textContent;
+        showLastNumber.textContent = back.substring(0, back.length - 1);}
 }
+
+window.addEventListener('keydown', (click) =>{
+    if (click.key >= 0 && click.key <= 9)  getNumber(click.key)
+    if (click.key === '.') dot()
+    if (click.key === '=' || click.key === 'Enter') getResult()
+    if (click.key === 'Backspace') back()
+    if (click.key === 'Escape') reset()
+    if (click.key === '+' || click.key === '-' || click.key === '*' || click.key === '/')
+    getOperation(click.key)
+  })
+
